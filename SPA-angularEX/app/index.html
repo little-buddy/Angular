@@ -28,9 +28,27 @@
         angular.module('lee',['ngRoute'])
             .config(function ($routeProvider) {
 
-                $routeProvider.when('/',{
-                    template:'views/team_list.html',
-                    controller:TeamListCtrl
+                $routeProvider.when('/', {
+                    template: 'views/team_list.html',
+                    controller: TeamListCtrl
+                }).when('/login', {
+                    templateUrl: 'views/login.html'
+                }).when('/team/:code', {
+                    template: 'views/team_details.html',
+                    controller: 'TeamDetailsCtrl as teamDtailsCtrl',
+                    resolve: {
+                        auth: ['$q', '$location', 'UserService', function ($q, $location, UserService) {
+                            return UserService.session().then(function (success) {
+                            }, function (err) {
+                                $location.path('/login');
+                                $location.replace();
+                                return $q.reject(err);
+                            })
+                        }]
+                    }
+                });
+                $routeProvider.otherwise({
+                    redirecTo: '/'
                 })
             })
     </script>
