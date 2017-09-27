@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="styles/main.css">
 
     <script src="scripts/vendors/jquery-1.11.1.js"></script>
-    <script src="scripts/vendors/angular-route.min.js"></script>
     <script src="scripts/vendors/angular.min.js"></script>
+    <script src="scripts/vendors/angular-route.min.js"></script>
 
 </head>
 <body ng-app="lee" class="landing">
@@ -29,13 +29,13 @@
             .config(function ($routeProvider) {
 
                 $routeProvider.when('/', {
-                    template: 'views/team_list.html',
-                    controller: TeamListCtrl
+                    templateUrl: 'views/team_list.html',
+                    controller: 'TeamListCtrl as teamListCtrl'
                 }).when('/login', {
                     templateUrl: 'views/login.html'
                 }).when('/team/:code', {
-                    template: 'views/team_details.html',
-                    controller: 'TeamDetailsCtrl as teamDtailsCtrl',
+                    templateUrl: 'views/team_details.html',
+                    controller: 'TeamDetailsCtrl as teamDetailsCtrl',
                     resolve: {
                         auth: ['$q', '$location', 'UserService', function ($q, $location, UserService) {
                             return UserService.session().then(function (success) {
@@ -48,7 +48,7 @@
                     }
                 });
                 $routeProvider.otherwise({
-                    redirecTo: '/'
+                    redirectTo: '/'
                 })
             })
     </script>
@@ -101,7 +101,7 @@
                 var self=this;
                 self.teams=[];
                 FifaService.getTeams().then(function (resp) {
-                    self.teams=resp;
+                    self.teams=resp.data;
                 })
             }])
             .controller('LoginCtrl',['UserService','$location',function (UserService,$location) {
@@ -117,7 +117,7 @@
                 }
 
             }])
-            .controller('TeamDetailCtrl',['$location','$routeParams','FifaService',function ($location, $routeParams, FifaService) {
+            .controller('TeamDetailsCtrl',['$location','$routeParams','FifaService',function ($location, $routeParams, FifaService) {
                 var self=this;
                 self.team={};
 

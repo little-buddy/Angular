@@ -3,21 +3,21 @@
  */
 var express = require('express'),
   http = require('http'),
-  passport = require('passport'),
-  morgan = require('morgan'),
-  compress = require('compression'),
-  bodyParser = require('body-parser'),
-  methodOverride = require('method-override'),
-  cookieParser = require('cookie-parser'),
-  session = require('express-session'),
-  LocalStrategy = require('passport-local').Strategy,
-  serverStatic = require('serve-static'),
-  FIFA = require('./fifa').FIFA;
+  passport = require('passport'),                           //node 端的 权限验证框架
+  morgan = require('morgan'),                               //node 端的 日志组件
+  compress = require('compression'),                        //node 端的 启用GZIP压缩，在客户端请求的数据会被压缩返回到客户端【好用啊】
+  bodyParser = require('body-parser'),                      //node 端的 HTTP请求解析中间件，使用这个模块可以解析JSON、Raw、文本、URL-encoded格式的请求体
+  methodOverride = require('method-override'),              //node 必须和body-parser结合使用，为body-parser提供伪http请求，form自能发get、post，而这个模块解决了表单put等方式的请求
+  cookieParser = require('cookie-parser'),                  //node cookie解析
+  session = require('express-session'),                     //node
+  LocalStrategy = require('passport-local').Strategy,       //node
+  serverStatic = require('serve-static'),                   //node
+  FIFA = require('./fifa').FIFA;                            //node
 
 var USER = {username: 'admin', password: 'admin'};
 
 var app = express();
-app.use(morgan());
+app.use(morgan('short'));
 app.use(compress());
 app.use(bodyParser());
 
