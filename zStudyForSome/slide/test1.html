@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>fade slide</title>
+    <style>
+        *{padding:0;margin:0;}
+        .container{
+            position: relative;
+            width:960px;
+            height:480px;
+            margin:20px auto;
+            border:1px solid;
+            overflow:hidden;
+        }
+        .img-container{
+            width:100%;
+            height:480px;
+        }
+        .img-container li{
+            position:absolute;
+            top:0;
+            display:block;
+            opacity:0;
+        }
+        .img-container img{
+            width:960px;
+            height:480px;
+        }
+        .btn-container{
+            position:absolute;
+            bottom:30px;
+            right:30px;
+            width:120px;
+            list-style:none;
+        }
+        .btn-container li{
+            float:left;
+            width:20px;
+            height:20px;
+            margin:0 10px;
+        }
+        .btn-container a{
+            display:block;
+            width:20px;
+            height:20px;
+            border-radius:50%;
+            border:1px solid #ff8080;
+        }
+        .btn-container .active{
+            background:#ff8080;
+        }
+        .clearfix:after{
+            content:'';
+            display:block;
+            clear:both;
+        }
+
+
+    </style>
+</head>
+<body>
+<!--当li是position的时候，内容大小取决于所包含的元素大小-->
+    <div class="container" id="fadeslide">
+        <ul class="img-container">
+            <li style="opacity:1;"><img src="../bg.png" alt=""></li>
+            <li><img src="../content.jpeg" alt=""></li>
+            <li><img src="../ydlogo.png" alt=""></li>
+        </ul>
+
+        <ul class="btn-container clearfix">
+            <li><a class="active" href="#"></a></li>
+            <li><a href="#"></a></li>
+            <li><a href="#"></a></li>
+        </ul>
+    </div>
+    <script src='../../bower_components/jquery/jquery.min.js'></script>
+<script>
+    ;(function($){
+        var fadeSlider=function(el,userconfig){
+            var _this   = this;
+
+            this.el=el;
+            this.config={
+                current:0,
+                speed:500,
+                intervalTime:500
+            };
+            this.interval=null;
+//            这里不涉及到图片需要重复
+            this.imgNum=this.el.find('img').length;
+
+            if(userconfig!=null){
+                $.extend(this.config,userconfig)
+            }
+
+
+            var fademodel=function(){
+                $('.btn-container a').eq(_this.config.current).removeClass('active');
+                $('.img-container li:eq('+_this.config.current+')').stop(true,false).animate({opacity:'0'},_this.config.speed);
+                if(++_this.config.current==_this.imgNum){
+                    _this.config.current=0;
+                }
+                $('.btn-container a').eq(_this.config.current).addClass('active');
+                $('.img-container li:eq('+_this.config.current+')').stop(true,false).animate({opacity:'1'},_this.config.speed);
+            }
+            var interval=setInterval(fademodel,this.config.intervalTime);
+
+            $('.btn-container a').on('click',function(){
+                clearInterval(interval);
+                $('.btn-container a').eq(_this.config.current).removeClass('active');
+                $('.img-container li:eq('+_this.config.current+')').stop(true,false).animate({opacity:'0'},_this.config.speed);
+                $(this).addClass('active');
+                _this.config.current=$('.btn-container a').index($(this));
+                $('.img-container li:eq('+_this.config.current+')').stop(true,false).animate({opacity:'1'},_this.config.speed);
+                interval=setInterval(fademodel,_this.config.intervalTime);
+            })
+
+
+        }
+        $.fn.extend({
+            fadeSlider:function(config){
+                new fadeSlider($(this),config);
+            }
+        })
+    })(jQuery)
+
+    var config={
+        current:0,
+        speed:700,
+        intervalTime:3000
+    }
+    $(function(){
+        $('#fadeslide').fadeSlider(config);
+    })
+
+</script>
+</body>
+</html>
