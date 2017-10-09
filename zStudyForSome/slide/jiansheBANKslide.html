@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+    <meta http-equiv="X-UA-Compatiable" content="IE=Edge">
+    <link rel="shortcut icon" href="">
+    <link rel="stylesheet" href="../../bower_components/normalize-css/normalize.css">
+    <title>左右滑动，到头滑动按钮变灰</title>
+    <style>
+        *{padding:0;margin:0;}
+        .container{
+            position:relative;
+            width:800px;
+            height:100px;
+            margin:0 auto;
+        }
+        .left,.right{
+            position:absolute;
+            display:block;
+            width:40px;
+            height:40px;
+            top:50%;
+            margin-top:-20px;
+            text-align: center;
+            text-decoration:none;
+            line-height:40px;
+            font-size:20px;
+            color:#fff;
+            background-color: gray;
+            opactiy:.9;
+        }
+        .container .left{
+            left:-40px;
+        }
+        .container .right{
+            right:-40px;
+        }
+        .container .view{
+            position:absolute;
+            width:2000px;
+            list-style:none;
+        }
+        .container .view li{
+            float:left;
+            width:198px;
+            height:98px;
+            border:1px solid aquamarine;
+        }
+        .container .leftcant,.container .rightcant{
+            background:red;
+        }
+        .clearfix:after{
+            content:'';
+            display:block;
+            clear:both;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div style="position:relative;width:100%;height:100%;overflow:hidden;">
+            <ul class="view clearfix">
+                <li>2017</li>
+                <li>要相信自己</li>
+                <li>坚持住</li>
+                <li>必然是胜利</li>
+                <li>等有钱了，去报个新东方的班</li>
+                <li>2017</li>
+                <li>要相信自己</li>
+                <li>坚持住</li>
+                <li>必然是胜利</li>
+                <li>等有钱了，去报个新东方的班</li>
+            </ul>
+        </div>
+    </div>
+    <script src="../../bower_components/jquery/jquery.min.js"></script>
+    <script>
+        (function($){
+            var xsSlider=function(el,config){
+                var _this=this;
+                this.el=el;
+                this.conf={
+                    current:0,
+                    speed:500,
+                    num:4
+                };
+                this.view=this.el.find('.view');
+                this.liNum=this.view.children('li').length;
+                //滑动的长度必然取决于Li的长度
+                this.liLen=this.view.children('li').outerWidth(true);
+                this.leftX=[];
+                this.rightX=[];
+                var forNum=Math.floor(this.liNum/this.conf.num);
+//                右键
+                for(i=0;i<=forNum;i++){
+                    if(i==0){
+                        this.rightX.push(0);
+                    }
+                    else if(i==forNum){
+                        this.rightX.push(this.rightX[i-1]+this.liLen*(this.liNum%this.conf.num))
+                    }
+                    else{
+                        this.rightX.push(this.rightX[i-1]+this.liLen*this.conf.num*i);
+                    }
+                }
+//                左键
+                for(var i=0;i<forNum;i++){
+                   if(i==0){
+                       this.leftX.push(0);
+                   }
+                   else{
+                       this.leftX.push(this.rightX[i+1]-this.liLen*this.conf.num*i)
+                   }
+                }
+
+                if(config!=null)
+                    $.extend(this.conf,config);
+                var left=document.createElement("a");
+                left.className="left leftcant";
+                left.setAttribute("href","javascript:;");
+                left.innerHTML="<";
+                $(left).on('click',function(){
+                    if(_this.conf.current!=0){
+                        if($(right).hasClass('rightcant'))
+                            $(right).removeClass('rightcant');
+                        _this.conf.current--;
+                        _this.view.stop(true,false).animate({left:-_this.leftX[_this.conf.current]+"px"},_this.conf.speed,function(){
+                            if(_this.conf.current==0) {
+                                $(left).addClass("leftcant");
+                            }
+                        });
+                    }
+                });
+                this.el.append(left);
+                var right=document.createElement("a");
+                right.className="right";
+                right.setAttribute("href","javascript:;");
+                right.innerHTML=">";
+                this.el.append(right);
+                $(right).on("click",function() {
+                    if (_this.conf.current != forNum) {
+                        if ($(left).hasClass('leftcant'))
+                            $(left).removeClass('leftcant');
+                        _this.conf.current++;
+                        _this.view.stop(true, false).animate({left: -_this.rightX[_this.conf.current] + "px"}, _this.conf.speed, function () {
+                            if (_this.conf.current == forNum) {
+                                $(right).addClass("rightcant");
+                            }
+                        });
+
+                    }
+                });
+            };
+
+            $.fn.extend({
+                xsSlider:function(config){
+                    new xsSlider($(this),config);
+                }
+            })
+        })(jQuery);
+        $(function(){
+            $('.container').xsSlider();
+        })
+    </script>
+</body>
+</html>
